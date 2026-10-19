@@ -1,0 +1,1122 @@
+<title>SOA-C03 Exam Drill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one 72rem column. Quiz screens split into a reading column and a sticky question-map rail; the rail drops below on narrow screens. */
+:root {
+  --bg: #ECEFF2;
+  --surface: #FFFFFF;
+  --sunk: #E1E6EB;
+  --ink: #131C25;
+  --muted: #566372;
+  --line: #CBD3DB;
+  --accent: #E39A2D;
+  --accent-ink: #8C5200;
+  --on-accent: #1B1306;
+  --ok: #17784A;
+  --ok-tint: #E2F1E8;
+  --alarm: #B63A24;
+  --alarm-tint: #F8E5E0;
+  --on-state: #FFFFFF;
+  --code-bg: #F2F4F6;
+  --scrim: rgb(9 14 19 / 0.55);
+
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E141A; --surface: #161F28; --sunk: #1D2832; --ink: #E3E9EF; --muted: #93A1AE; --line: #2C3945;
+    --accent: #F0A23B; --accent-ink: #F4B562; --on-accent: #1B1306;
+    --ok: #4CC38A; --ok-tint: #12291D; --alarm: #F07A63; --alarm-tint: #34190F; --on-state: #0E141A;
+    --code-bg: #10181F; --scrim: rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E141A; --surface: #161F28; --sunk: #1D2832; --ink: #E3E9EF; --muted: #93A1AE; --line: #2C3945;
+  --accent: #F0A23B; --accent-ink: #F4B562; --on-accent: #1B1306;
+  --ok: #4CC38A; --ok-tint: #12291D; --alarm: #F07A63; --alarm-tint: #34190F; --on-state: #0E141A;
+  --code-bg: #10181F; --scrim: rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 72rem; margin-inline: auto; padding-inline: clamp(16px, 4vw, 32px); }
+h1, h2, h3, h4 { text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+
+/* ---------- shared atoms ---------- */
+.btn {
+  font: inherit; font-weight: 700; font-size: 0.9375rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
+  min-height: 2.625rem; padding: 0.55rem 1.05rem;
+  border-radius: 6px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { border-color: var(--on-accent); }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.ghost:hover { background: var(--sunk); color: var(--ink); }
+.btn.danger { color: var(--alarm); border-color: var(--alarm); }
+.btn.sm { min-height: 2.25rem; padding: 0.35rem 0.8rem; font-size: 0.875rem; }
+.btn.wide { width: 100%; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; border-color: var(--line); }
+.btn .k { font: 600 0.6875rem var(--f-mono); opacity: 0.7; }
+
+.eyebrow {
+  font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent-ink); margin: 0 0 0.75rem;
+}
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.state {
+  display: inline-block; font: 600 0.6875rem/1.2 var(--f-mono); letter-spacing: 0.07em;
+  padding: 0.3rem 0.5rem; border-radius: 4px; white-space: nowrap;
+  background: var(--sunk); color: var(--muted);
+}
+.state.ok { background: var(--ok); color: var(--on-state); }
+.state.alarm { background: var(--alarm); color: var(--on-state); }
+.state.flag { background: var(--accent); color: var(--on-accent); }
+.row { display: flex; flex-wrap: wrap; gap: 0.625rem; align-items: center; }
+.topic { color: var(--muted); font-size: 0.9375rem; }
+
+/* ---------- header bar ---------- */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.bar-in { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 1rem; min-height: 3.5rem; padding-block: 0.45rem; }
+.brand { display: inline-flex; align-items: center; gap: 0.55rem; background: none; border: 0; padding: 0; color: var(--ink); cursor: pointer; font: inherit; }
+.brand-code { font: 600 0.75rem/1 var(--f-mono); letter-spacing: 0.04em; background: var(--ink); color: var(--surface); padding: 0.35rem 0.45rem; border-radius: 4px; }
+.brand-name { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.0625rem; letter-spacing: -0.005em; }
+.bar-mid { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin-left: auto; font-family: var(--f-mono); font-size: 0.8125rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar-mode { font-weight: 600; color: var(--ink); text-transform: uppercase; letter-spacing: 0.06em; }
+.timer { font: 600 0.9375rem var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ink); padding: 0.3rem 0.55rem; border: 1px solid var(--line); border-radius: 6px; }
+.timer.low { color: var(--alarm); border-color: var(--alarm); }
+.progress { height: 3px; background: var(--sunk); }
+.progress > i { display: block; height: 100%; background: var(--accent); transition: width 0.25s ease; }
+
+/* ---------- home ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 2rem 3rem; align-items: end; padding-block: 3rem 2.25rem; }
+h1 {
+  font-family: var(--f-display); font-stretch: 120%; font-weight: 850;
+  font-size: clamp(2.5rem, 7.2vw, 4.6rem); line-height: 0.93; letter-spacing: -0.022em; margin: 0;
+}
+h1 .code { display: block; color: var(--accent-ink); font-stretch: 100%; }
+.lede { font-size: 1.125rem; color: var(--muted); max-width: 50ch; margin: 1.1rem 0 0; }
+.specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin: 0; }
+.specs > div { background: var(--surface); padding: 0.75rem 1rem; min-width: 0; }
+.specs dt { font-family: var(--f-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.specs dd { margin: 0.15rem 0 0; font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.75rem; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.specs dd small { font-size: 0.875rem; font-weight: 500; color: var(--muted); margin-left: 0.2rem; }
+.specs.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.board { padding-block: 1.5rem 1.75rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.board-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem 1.5rem; margin-bottom: 0.875rem; }
+.board h2 { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.125rem; margin: 0; }
+.board h2 span { font-family: var(--f-body); font-weight: 400; font-size: 0.9375rem; color: var(--muted); margin-left: 0.4rem; }
+.counts { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; font-family: var(--f-mono); font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.counts b { color: var(--ink); font-weight: 600; }
+.sw { display: inline-block; width: 0.625rem; height: 0.625rem; border-radius: 2px; background: var(--sunk); border: 1px solid var(--line); margin-right: 0.35rem; vertical-align: -1px; }
+.sw.ok { background: var(--ok); border-color: var(--ok); }
+.sw.alarm { background: var(--alarm); border-color: var(--alarm); }
+.sw.ans { background: var(--ink); border-color: var(--ink); }
+.sw.flag { background: var(--accent); border-color: var(--accent); }
+.strip { display: flex; gap: 2px; height: 2.5rem; }
+.strip i { flex: 1 1 0; min-width: 0; border-radius: 2px; background: var(--sunk); }
+.strip i.ok { background: var(--ok); }
+.strip i.alarm { background: var(--alarm); }
+.strip-axis { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 0.6875rem; color: var(--muted); margin-top: 0.4rem; }
+.board .row { margin-top: 1rem; }
+
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding-block: 2rem; }
+.mode { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+.mode-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.mode h2 { font-family: var(--f-display); font-stretch: 116%; font-weight: 850; font-size: 1.875rem; letter-spacing: -0.015em; margin: 0; }
+.mode-head .mono { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.mode p { margin: 0; }
+.rules { margin: 0; padding-left: 1.15rem; display: grid; gap: 0.4rem; }
+.rules li::marker { color: var(--muted); }
+.settings { display: grid; gap: 0.7rem; padding: 0.9rem 1rem; background: var(--sunk); border-radius: 8px; font-size: 0.9375rem; }
+.settings label { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+.settings input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: var(--ink); margin: 0; }
+.settings .field { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+select {
+  font: inherit; font-size: 0.9375rem; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 0.35rem 0.6rem;
+}
+.mode .row { margin-top: auto; }
+.mode .sub { font-size: 0.875rem; color: var(--muted); }
+.mode .sub button { font: inherit; background: none; border: 0; padding: 0; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.source { color: var(--muted); font-size: 0.875rem; max-width: 70ch; padding-block: 0 3rem; margin: 0; }
+.source code { font-size: 0.8125rem; }
+
+/* ---------- quiz layout ---------- */
+.quiz { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; gap: 2.5rem; align-items: start; padding-block: 1.75rem 4rem; }
+.qcol { min-width: 0; max-width: 48rem; }
+.qmeta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; margin-bottom: 1rem; }
+.qnum { font-family: var(--f-display); font-stretch: 114%; font-weight: 850; font-size: 1.625rem; letter-spacing: -0.01em; margin: 0; line-height: 1.1; }
+.qnum small { font-family: var(--f-body); font-weight: 400; font-size: 1rem; color: var(--muted); letter-spacing: 0; }
+.qmeta .mono { font-size: 0.75rem; color: var(--muted); }
+.qmeta .push { margin-left: auto; }
+.stem { font-size: 1.0625rem; }
+.stem p { margin: 0 0 0.8em; }
+.stem p:last-child { margin-bottom: 0; }
+
+.opts { display: grid; gap: 0.625rem; margin-block: 1.4rem 0; }
+.opt {
+  display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: 0.875rem; align-items: start;
+  padding: 0.8rem 1rem; border: 1.5px solid var(--line); border-radius: 8px;
+  background: var(--surface); cursor: pointer; transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+.opt:hover { border-color: var(--muted); }
+.opt-key {
+  display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 6px;
+  border: 1.5px solid var(--line); font: 600 0.875rem/1 var(--f-mono); color: var(--muted);
+}
+.opt-body { min-width: 0; padding-top: 0.2rem; }
+.opt-body pre { margin: 0; }
+.opt-tag { font: 600 0.6875rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.3rem 0.45rem; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap; }
+.opt-tag.ok { color: var(--ok); }
+.opt-tag.bad { color: var(--alarm); }
+.opt-tags { display: grid; gap: 0.3rem; justify-items: end; padding-top: 0.35rem; }
+.opt.is-sel { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.opt.is-sel .opt-key { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.opt.is-right { border-color: var(--ok); background: var(--ok-tint); }
+.opt.is-right .opt-key { background: var(--ok); border-color: var(--ok); color: var(--on-state); }
+.opt.is-out { border-color: var(--alarm); background: var(--alarm-tint); }
+.opt.is-out .opt-key { background: var(--alarm); border-color: var(--alarm); color: var(--on-state); }
+.opt.is-out .opt-body { color: var(--muted); }
+.opt[aria-disabled="true"] { cursor: default; }
+.opt[aria-disabled="true"]:not(.is-right):not(.is-out):hover { border-color: var(--line); }
+.opts.static .opt { cursor: default; }
+.opts.static .opt:not(.is-right):not(.is-out) { background: transparent; }
+
+.pick-hint { font-family: var(--f-mono); font-size: 0.8125rem; color: var(--muted); margin: 0.75rem 0 0; font-variant-numeric: tabular-nums; }
+.pick-hint.flash { color: var(--alarm); }
+.feedback {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+  margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px;
+  background: var(--alarm-tint); border: 1px solid var(--alarm);
+}
+.feedback p { margin: 0; flex: 1 1 14rem; }
+.feedback .mono { font-size: 0.75rem; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 0.625rem; align-items: center; margin-top: 1.4rem; }
+.actions .spacer { flex: 1 1 auto; }
+.keys { font-family: var(--f-mono); font-size: 0.6875rem; color: var(--muted); margin: 1rem 0 0; }
+.keys kbd { font: inherit; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 0.3rem; background: var(--surface); }
+
+.explain { margin-top: 1.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem 1.35rem 1.4rem; display: grid; gap: 1.25rem; }
+.explain-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.8rem; }
+.explain-head h3 { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.25rem; margin: 0; }
+.explain-sec h4 { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 0.5rem; }
+.explain-sec.right h4 { color: var(--ok); }
+.explain-sec.wrong h4 { color: var(--alarm); }
+
+.prose { max-width: 68ch; }
+.prose p { margin: 0 0 0.75em; }
+.prose p:last-child { margin-bottom: 0; }
+.prose ul { margin: 0; padding-left: 1.15rem; display: grid; gap: 0.55rem; }
+.prose li::marker { color: var(--muted); }
+code { font-family: var(--f-mono); font-size: 0.86em; background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 0.05em 0.3em; overflow-wrap: anywhere; }
+pre { margin: 0.75rem 0; background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 0.75rem 0.9rem; overflow-x: auto; font-size: 0.8125rem; line-height: 1.5; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; overflow-wrap: normal; }
+.table-wrap { overflow-x: auto; margin: 0.75rem 0; }
+table { border-collapse: collapse; font-size: 0.875rem; min-width: 34rem; }
+th, td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.6rem; text-align: left; vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 0.6875rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+/* rail */
+.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 5rem); max-height: calc(100vh - 6rem); overflow-y: auto; display: grid; gap: 1rem; padding-bottom: 0.25rem; }
+.rail-head { display: flex; justify-content: space-between; align-items: baseline; }
+.rail-head h2 { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1rem; margin: 0; }
+.rail-head .mono { font-size: 0.8125rem; color: var(--muted); }
+.cells { list-style: none; margin: 0; padding: 2px; display: grid; grid-template-columns: repeat(auto-fill, minmax(2.15rem, 1fr)); gap: 0.375rem; }
+.cell {
+  position: relative; display: block; width: 100%; max-width: 100%; aspect-ratio: 1;
+  font: 600 0.75rem/1 var(--f-mono); font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+  border-radius: 4px; cursor: pointer; padding: 0;
+}
+.cell:hover { border-color: var(--ink); }
+.cell.s-ok { background: var(--ok); border-color: var(--ok); color: var(--on-state); }
+.cell.s-alarm { background: var(--alarm); border-color: var(--alarm); color: var(--on-state); }
+.cell.s-ans { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.cell.s-part { border-color: var(--ink); color: var(--ink); border-style: dashed; }
+.cell.is-flag::after { content: ""; position: absolute; top: -1px; right: -1px; width: 0; height: 0; border-style: solid; border-width: 0 0.6rem 0.6rem 0; border-color: transparent var(--accent) transparent transparent; border-top-right-radius: 4px; }
+.cell.is-cur { outline: 2px solid var(--accent); outline-offset: 2px; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; font-size: 0.8125rem; color: var(--muted); }
+.legend b { font-family: var(--f-mono); font-size: 0.6875rem; font-weight: 600; color: var(--ink); letter-spacing: 0.03em; }
+
+/* dialog */
+.scrim { position: fixed; inset: 0; background: var(--scrim); display: grid; place-items: center; padding: 16px; z-index: 50; }
+.dialog { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 28rem; display: grid; gap: 1rem; }
+.dialog h2 { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.375rem; margin: 0; }
+.dialog p { margin: 0; }
+.dialog .row { justify-content: flex-end; }
+
+/* ---------- results / reports ---------- */
+.score { padding-block: 2.5rem 2rem; display: grid; gap: 1.5rem; }
+.score-main { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 2rem; }
+.big { font-family: var(--f-display); font-stretch: 120%; font-weight: 850; font-size: clamp(3.25rem, 11vw, 6rem); line-height: 0.88; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin: 0; }
+.big .of { font-size: 0.38em; color: var(--muted); font-weight: 600; letter-spacing: 0; }
+.verdict { display: grid; gap: 0.45rem; justify-items: start; padding-bottom: 0.3rem; }
+.verdict p { margin: 0; font-size: 1.0625rem; }
+.meter-box { max-width: 40rem; padding-top: 1.4rem; }
+.meter { position: relative; height: 0.75rem; background: var(--sunk); border-radius: 999px; }
+.meter-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: inherit; background: var(--ok); }
+.meter-fill.fail { background: var(--alarm); }
+.meter-pass { position: absolute; top: -0.45rem; bottom: -0.45rem; width: 2px; margin-left: -1px; background: var(--ink); }
+.meter-pass span { position: absolute; bottom: calc(100% + 0.2rem); left: 50%; transform: translateX(-50%); font: 600 0.6875rem var(--f-mono); white-space: nowrap; }
+.meter-axis { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 0.6875rem; color: var(--muted); margin-top: 0.45rem; }
+.note { color: var(--muted); font-size: 0.875rem; margin: 0; max-width: 70ch; }
+
+.review { max-width: 50rem; padding-bottom: 4rem; }
+.review-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem 1rem; padding-block: 1.25rem; border-top: 1px solid var(--line); }
+.review-head h2 { font-family: var(--f-display); font-stretch: 114%; font-weight: 850; font-size: 1.5rem; margin: 0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; background: var(--sunk); padding: 0.25rem; border-radius: 8px; }
+.tab { font: inherit; font-size: 0.875rem; font-weight: 700; border: 0; background: transparent; color: var(--muted); padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+.tab .n { font-family: var(--f-mono); font-weight: 600; margin-left: 0.35rem; }
+.rev { padding-block: 1.75rem 2rem; border-top: 1px solid var(--line); }
+.rev-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-bottom: 0.9rem; }
+.rev-head h3 { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.25rem; margin: 0; }
+.rev-head .mono { font-size: 0.75rem; color: var(--muted); margin-left: auto; }
+.rev .yours { font-size: 0.9375rem; margin: 1rem 0 0; }
+.rev .explain { margin-top: 1.25rem; }
+.empty { color: var(--muted); padding-block: 1.5rem; margin: 0; }
+
+.miss-list { list-style: none; margin: 0; padding: 0; }
+.miss-list button {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.9rem; align-items: center;
+  width: 100%; text-align: left; padding: 0.8rem 0.25rem; border: 0; border-bottom: 1px solid var(--line);
+  background: none; color: inherit; font: inherit; cursor: pointer;
+}
+.miss-list button:hover .miss-topic { text-decoration: underline; text-underline-offset: 3px; }
+.miss-list .mono { font-size: 0.75rem; color: var(--muted); }
+
+.load-error { padding: 2rem 16px; max-width: 40rem; margin: 0 auto; }
+
+/* motion */
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+@keyframes enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.shake { animation: shake 0.32s ease; }
+.enter { animation: enter 0.28s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .shake, .enter { animation: none; }
+  .progress > i, .opt { transition: none; }
+}
+
+@media (max-width: 860px) {
+  .quiz { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .rail { position: static; max-height: none; overflow: visible; border-top: 1px solid var(--line); padding-top: 1.5rem; }
+  .keys { display: none; }
+}
+@media (max-width: 760px) {
+  .hero, .modes { grid-template-columns: minmax(0, 1fr); }
+  .hero { padding-block: 2rem 1.5rem; }
+  .specs.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .strip { gap: 1px; height: 2rem; }
+  .opt { grid-template-columns: 2rem minmax(0, 1fr); }
+  .opt-tags { grid-column: 2; grid-auto-flow: column; justify-content: start; padding-top: 0; }
+  .mode { padding: 1.25rem; }
+}
+</style>
+
+<div id="app"></div>
+
+<script src="questions.js"></script>
+<script>
+(() => {
+  const app = document.getElementById('app');
+  const DATA = window.QUIZ;
+  if (!DATA) {
+    app.innerHTML = '<p class="load-error">The question data did not load. Keep <code>questions.js</code> next to this page, or run <code>python3 build.py</code> to generate it.</p>';
+    return;
+  }
+
+  const QS = DATA.questions;
+  const Q = new Map(QS.map(q => [q.n, q]));
+  const MULTI = QS.filter(q => q.answer.length > 1).length;
+  const STORE = 'soa-c03-drill-v1';
+  const SEC_PER_Q = 120;
+  const PASS = 720;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const defaults = () => ({
+    screen: 'home',
+    settings: { pShuffle: false, eShuffle: false, examCount: QS.length, timed: true },
+    practice: null,
+    exam: null,
+    hist: {},
+    filter: 'missed',
+    confirm: false,
+  });
+  let S = defaults();
+  let fx = {};      // one-shot effects for the next render
+  let armed = null; // which "start over" button is waiting for a second click
+
+  /* ---------- helpers ---------- */
+  const sameSet = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+  const shuffle = arr => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const listKeys = keys => keys.length < 2 ? keys.join('') : keys.slice(0, -1).join(', ') + ' and ' + keys[keys.length - 1];
+  const fmtTime = ms => {
+    const t = Math.max(0, Math.round(ms / 1000));
+    const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+    return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(s).padStart(2, '0');
+  };
+  const pctOf = (a, b) => b ? Math.round((a / b) * 100) : 0;
+  const plural = (n, one, many) => n + ' ' + (n === 1 ? one : (many || one + 's'));
+  const validSession = s => s && Array.isArray(s.order) && s.order.length > 0 && s.order.every(n => Q.has(n));
+
+  function load() {
+    try { const raw = localStorage.getItem(STORE); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  }
+  function save() {
+    try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* storage unavailable: state lives in memory */ }
+  }
+
+  /* ---------- practice logic ---------- */
+  function startPractice(nums, label) {
+    const base = nums && nums.length ? nums.slice() : QS.map(q => q.n);
+    S.practice = { order: S.settings.pShuffle ? shuffle(base) : base.sort((a, b) => a - b), pos: 0, rec: {}, label: label || '' };
+    S.screen = 'practice';
+    armed = null;
+    fx.top = true;
+    go();
+  }
+  function prec(n) {
+    const P = S.practice;
+    return P.rec[n] || (P.rec[n] = { sel: [], out: [], misses: 0, done: null, lastWrong: [] });
+  }
+  function pStatus(n) {
+    const r = S.practice.rec[n];
+    if (!r) return 'none';
+    if (r.done === 'solved' && r.misses === 0) return 'ok';
+    if (r.done || r.misses > 0) return 'alarm';
+    return 'none';
+  }
+  function practiceCur() { const P = S.practice; const n = P.order[P.pos]; return { P, n, q: Q.get(n), r: prec(n) }; }
+
+  function practicePick(key) {
+    const { q, r } = practiceCur();
+    if (r.done || r.out.includes(key)) return;
+    if (q.answer.length === 1) { r.sel = [key]; practiceCheck(); return; }
+    if (r.sel.includes(key)) r.sel = r.sel.filter(k => k !== key);
+    else if (r.sel.length < q.answer.length) r.sel = [...r.sel, key];
+    else fx.hint = true;
+    fx.focus = key;
+    go();
+  }
+  function practiceCheck() {
+    const { n, q, r } = practiceCur();
+    if (r.done || r.sel.length !== q.answer.length) return;
+    const wrong = r.sel.filter(k => !q.answer.includes(k));
+    if (!wrong.length) {
+      r.done = 'solved';
+      r.lastWrong = [];
+      if (r.misses === 0) S.hist[n] = 'ok';
+      fx.reveal = true;
+      fx.focus = 'next';
+    } else {
+      r.misses++;
+      r.out = [...r.out, ...wrong];
+      r.sel = r.sel.filter(k => q.answer.includes(k));
+      r.lastWrong = wrong;
+      S.hist[n] = 'alarm';
+      fx.shake = wrong;
+      fx.focus = wrong[0];
+    }
+    go();
+  }
+  function practiceReveal() {
+    const { n, q, r } = practiceCur();
+    if (r.done) return;
+    r.done = 'revealed';
+    r.sel = q.answer.slice();
+    r.lastWrong = [];
+    S.hist[n] = 'alarm';
+    fx.reveal = true;
+    fx.focus = 'next';
+    go();
+  }
+  function practiceSummary(P) {
+    const s = { ok: [], recovered: [], revealed: [], open: [] };
+    P.order.forEach(n => {
+      const r = P.rec[n];
+      if (!r || !r.done) s.open.push(n);
+      else if (r.done === 'revealed') s.revealed.push(n);
+      else if (r.misses > 0) s.recovered.push(n);
+      else s.ok.push(n);
+    });
+    s.missed = P.order.filter(n => { const r = P.rec[n]; return r && (r.misses > 0 || r.done === 'revealed'); });
+    return s;
+  }
+
+  /* ---------- exam logic ---------- */
+  function startExam() {
+    const all = QS.map(q => q.n);
+    const count = Math.min(S.settings.examCount, all.length);
+    let order = count >= all.length ? all : shuffle(all).slice(0, count);
+    order = S.settings.eShuffle ? shuffle(order) : order.sort((a, b) => a - b);
+    const now = Date.now();
+    S.exam = {
+      order, pos: 0, ans: {}, flags: {}, startedAt: now,
+      deadline: S.settings.timed ? now + order.length * SEC_PER_Q * 1000 : null,
+      submittedAt: null, timeUp: false,
+    };
+    S.confirm = false;
+    S.screen = 'exam';
+    armed = null;
+    fx.top = true;
+    go();
+  }
+  const examComplete = (E, n) => (E.ans[n] || []).length === Q.get(n).answer.length;
+  const examActive = () => S.exam && !S.exam.submittedAt;
+
+  function examPick(key) {
+    const E = S.exam, n = E.order[E.pos], q = Q.get(n);
+    let a = E.ans[n] || [];
+    if (q.answer.length === 1) a = [key];
+    else if (a.includes(key)) a = a.filter(k => k !== key);
+    else if (a.length < q.answer.length) a = [...a, key];
+    else fx.hint = true;
+    if (a.length) E.ans[n] = a; else delete E.ans[n];
+    fx.focus = key;
+    go();
+  }
+  function examResult(E) {
+    const rows = E.order.map((n, i) => {
+      const q = Q.get(n), a = E.ans[n] || [];
+      const state = !a.length ? 'skipped' : sameSet(a, q.answer) ? 'right' : 'wrong';
+      return { i, n, q, a, state, flag: !!E.flags[n] };
+    });
+    const right = rows.filter(r => r.state === 'right').length;
+    const total = rows.length;
+    return {
+      rows, right, total,
+      wrong: rows.filter(r => r.state === 'wrong').length,
+      skipped: rows.filter(r => r.state === 'skipped').length,
+      scaled: Math.round(100 + 900 * right / total),
+    };
+  }
+  function submitExam(timeUp) {
+    const E = S.exam;
+    if (!E || E.submittedAt) return;
+    E.submittedAt = timeUp ? E.deadline : Date.now();
+    E.timeUp = !!timeUp;
+    const R = examResult(E);
+    R.rows.forEach(r => { if (r.state === 'right') S.hist[r.n] = 'ok'; else if (r.state === 'wrong') S.hist[r.n] = 'alarm'; });
+    S.confirm = false;
+    S.filter = R.right < R.total ? 'missed' : 'all';
+    if (S.screen === 'exam') { S.screen = 'examResults'; fx.top = true; }
+    go();
+  }
+
+  /* ---------- navigation shared by both modes ---------- */
+  function session() { return S.screen === 'practice' ? S.practice : S.screen === 'exam' ? S.exam : null; }
+  function moveTo(pos) {
+    const sess = session();
+    if (!sess) return;
+    const p = Math.max(0, Math.min(sess.order.length - 1, pos));
+    if (p === sess.pos) return;
+    sess.pos = p;
+    fx.top = true;
+    go();
+  }
+  function pick(key) { S.screen === 'practice' ? practicePick(key) : examPick(key); }
+  function practiceNext() {
+    const P = S.practice;
+    if (P.pos < P.order.length - 1) moveTo(P.pos + 1);
+    else { S.screen = 'practiceReport'; fx.top = true; go(); }
+  }
+
+  /* ---------- rendering ---------- */
+  function go() { save(); render(); }
+  function render() {
+    const views = { home: viewHome, practice: viewPractice, practiceReport: viewPracticeReport, exam: viewExam, examResults: viewExamResults };
+    app.innerHTML = (views[S.screen] || viewHome)();
+    app.querySelectorAll('table').forEach(t => {
+      if (t.parentElement.classList.contains('table-wrap')) return;
+      const w = document.createElement('div');
+      w.className = 'table-wrap';
+      t.replaceWith(w);
+      w.appendChild(t);
+    });
+    applyFx();
+  }
+  function applyFx() {
+    const f = fx;
+    fx = {};
+    if (f.top) window.scrollTo(0, 0);
+    if (f.shake) f.shake.forEach(k => app.querySelector(`.opt[data-key="${k}"]`)?.classList.add('shake'));
+    if (f.hint) app.querySelector('.pick-hint')?.classList.add('flash');
+    if (f.reveal) {
+      const ex = app.querySelector('.explain');
+      if (ex) {
+        ex.classList.add('enter');
+        const top = ex.getBoundingClientRect().top;
+        if (top > window.innerHeight * 0.7) window.scrollBy({ top: top - 96, behavior: reduced ? 'auto' : 'smooth' });
+      }
+    }
+    if (f.focus === 'next') app.querySelector('[data-act="next"]')?.focus({ preventScroll: true });
+    else if (f.focus) {
+      const el = app.querySelector(`.opt[data-key="${f.focus}"]`);
+      if (el && el.getAttribute('aria-disabled') !== 'true') el.focus({ preventScroll: true });
+      else app.querySelector('.opt:not([aria-disabled="true"])')?.focus({ preventScroll: true });
+    }
+  }
+
+  function header(mid) {
+    return `<header class="bar"><div class="wrap bar-in">
+      <button class="brand" data-act="home" aria-label="SOA-C03 Exam Drill, back to home"><span class="brand-code">SOA-C03</span><span class="brand-name">Exam Drill</span></button>
+      ${mid || ''}
+    </div></header>`;
+  }
+
+  function optHTML(o, { cls = '', disabled = false, pressed = false, tags = '', interactive = true }) {
+    const attrs = interactive
+      ? `role="button" tabindex="${disabled ? -1 : 0}" data-act="pick" data-key="${o.key}" aria-pressed="${pressed}" aria-disabled="${disabled}"`
+      : `data-key="${o.key}"`;
+    return `<div class="opt ${cls}" ${attrs}><span class="opt-key">${o.key}</span><div class="opt-body">${o.html}</div>${tags ? `<div class="opt-tags">${tags}</div>` : ''}</div>`;
+  }
+
+  function explainHTML(q, chip, extraClass) {
+    return `<section class="explain ${extraClass || ''}" aria-label="Explanation">
+      <div class="explain-head">${chip}<h3>Answer: ${q.answer.join(', ')}</h3><span class="topic">${q.topic}</span></div>
+      <div class="explain-sec right"><h4>Why it's right</h4><div class="prose">${q.why}</div></div>
+      <div class="explain-sec wrong"><h4>Why the other options are wrong</h4><div class="prose">${q.whyNot}</div></div>
+    </section>`;
+  }
+
+  /* home */
+  function viewHome() {
+    const P = S.practice, E = S.exam;
+    const hist = QS.map(q => S.hist[q.n] || 'none');
+    const nOk = hist.filter(h => h === 'ok').length;
+    const nAlarm = hist.filter(h => h === 'alarm').length;
+    const nNone = QS.length - nOk - nAlarm;
+
+    const pSum = P ? practiceSummary(P) : null;
+    const pDone = pSum ? P.order.length - pSum.open.length : 0;
+    let practiceActions;
+    if (P && pSum.open.length) {
+      practiceActions = `<button class="btn primary" data-act="resume-practice">Resume practice · ${pDone}/${P.order.length}</button>
+        <button class="btn ${armed === 'practice' ? 'danger' : 'ghost'}" data-act="restart-practice">${armed === 'practice' ? 'Discard progress and restart' : 'Start over'}</button>`;
+    } else {
+      practiceActions = `<button class="btn primary" data-act="start-practice">Start practice</button>`;
+    }
+    const practiceSub = P
+      ? `<p class="sub">${P.label ? P.label + ': ' : ''}${pDone} of ${P.order.length} answered, ${pSum.ok.length} right on the first try. <button data-act="report">See report</button></p>`
+      : '';
+
+    let examActions, examSub = '';
+    if (examActive()) {
+      const answered = E.order.filter(n => examComplete(E, n)).length;
+      const left = E.deadline ? ` · ${fmtTime(E.deadline - Date.now())} left` : '';
+      examActions = `<button class="btn primary" data-act="resume-exam">Resume exam · ${answered}/${E.order.length}${left}</button>
+        <button class="btn ${armed === 'exam' ? 'danger' : 'ghost'}" data-act="restart-exam">${armed === 'exam' ? 'Discard answers and restart' : 'Start over'}</button>`;
+    } else {
+      examActions = `<button class="btn primary" data-act="start-exam">Start exam</button>`;
+      if (E && E.submittedAt) {
+        const R = examResult(E);
+        examSub = `<p class="sub">Last exam: ${R.right}/${R.total} correct, estimated ${R.scaled}. <button data-act="results">Review it</button></p>`;
+      }
+    }
+    const countOpts = [QS.length, 30, 15].filter((v, i, a) => v <= QS.length && a.indexOf(v) === i)
+      .map(v => `<option value="${v}" ${S.settings.examCount === v ? 'selected' : ''}>${v === QS.length ? `All ${v} (full exam)` : `${v} random`}</option>`).join('');
+
+    return `${header()}
+    <main class="wrap">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">AWS Certified CloudOps Engineer – Associate</p>
+          <h1><span class="code">SOA-C03</span>Exam Drill</h1>
+          <p class="lede">${QS.length} questions from the official AWS Skill Builder practice assessment. Each one explains why the right answer is right and why every other option is wrong.</p>
+        </div>
+        <dl class="specs">
+          <div><dt>Questions</dt><dd>${QS.length}</dd></div>
+          <div><dt>Select two</dt><dd>${MULTI}</dd></div>
+          <div><dt>Full exam timer</dt><dd>${QS.length * SEC_PER_Q / 60}<small>min</small></dd></div>
+          <div><dt>Passing score</dt><dd>${PASS}<small>/ 1000</small></dd></div>
+        </dl>
+      </section>
+
+      <section class="board" aria-labelledby="board-t">
+        <div class="board-head">
+          <h2 id="board-t">Question status<span>your latest result on each question</span></h2>
+          <div class="counts">
+            <span><i class="sw ok"></i>OK <b>${nOk}</b></span>
+            <span><i class="sw alarm"></i>ALARM <b>${nAlarm}</b></span>
+            <span><i class="sw"></i>INSUFFICIENT_DATA <b>${nNone}</b></span>
+          </div>
+        </div>
+        <div class="strip" role="img" aria-label="${nOk} questions OK, ${nAlarm} in ALARM, ${nNone} not answered yet">
+          ${QS.map((q, i) => `<i class="${hist[i] === 'none' ? '' : hist[i]}" title="Q${q.n}: ${hist[i] === 'ok' ? 'OK' : hist[i] === 'alarm' ? 'ALARM' : 'not answered yet'}"></i>`).join('')}
+        </div>
+        <div class="strip-axis"><span>Q1</span><span>Q${QS.length}</span></div>
+        ${nAlarm ? `<div class="row"><button class="btn" data-act="practice-alarm">Practice the ${plural(nAlarm, 'question')} in ALARM</button></div>` : ''}
+      </section>
+
+      <section class="modes">
+        <article class="mode" aria-labelledby="m-practice">
+          <div class="mode-head"><h2 id="m-practice">Practice</h2><span class="mono">Feedback on every pick</span></div>
+          <ul class="rules">
+            <li>A wrong pick is marked wrong, and you pick again.</li>
+            <li>Once you get it right, you see why it's right and why each other option is wrong.</li>
+            <li>Stuck? Show the answer and read the explanation.</li>
+          </ul>
+          <div class="settings">
+            <label for="set-pshuffle"><input type="checkbox" id="set-pshuffle" ${S.settings.pShuffle ? 'checked' : ''}> Shuffle question order</label>
+          </div>
+          ${practiceSub}
+          <div class="row">${practiceActions}</div>
+        </article>
+
+        <article class="mode" aria-labelledby="m-exam">
+          <div class="mode-head"><h2 id="m-exam">Exam</h2><span class="mono">No feedback until you submit</span></div>
+          <ul class="rules">
+            <li>Answer at your own pace and flag questions to revisit.</li>
+            <li>Submit to get your score against the ${PASS} passing mark.</li>
+            <li>Then review every question with its full explanation.</li>
+          </ul>
+          <div class="settings">
+            <div class="field"><label for="set-count">Questions</label><select id="set-count">${countOpts}</select></div>
+            <label for="set-timed"><input type="checkbox" id="set-timed" ${S.settings.timed ? 'checked' : ''}> Time limit (2 min per question)</label>
+            <label for="set-eshuffle"><input type="checkbox" id="set-eshuffle" ${S.settings.eShuffle ? 'checked' : ''}> Shuffle question order</label>
+          </div>
+          ${examSub}
+          <div class="row">${examActions}</div>
+        </article>
+      </section>
+
+      <p class="source">Questions and explanations come from <code>aws-cloudops-practice-exam-explained.md</code>. The explanations are that file author's reasoning, not AWS's official rationale. Progress is saved in this browser only.</p>
+    </main>`;
+  }
+
+  /* practice */
+  function viewPractice() {
+    const { P, n, q, r } = practiceCur();
+    const multi = q.answer.length > 1;
+    const done = !!r.done;
+    const sum = practiceSummary(P);
+    const answered = P.order.length - sum.open.length;
+    const last = P.pos === P.order.length - 1;
+
+    const opts = q.options.map(o => {
+      const k = o.key;
+      const right = done && q.answer.includes(k);
+      const out = r.out.includes(k);
+      const sel = r.sel.includes(k);
+      const cls = right ? 'is-right' : out ? 'is-out' : sel ? 'is-sel' : '';
+      const tags = right ? '<span class="opt-tag ok">Correct</span>' : out ? '<span class="opt-tag bad">Wrong</span>' : '';
+      return optHTML(o, { cls, disabled: done || out, pressed: sel || right, tags });
+    }).join('');
+
+    let feedback = '';
+    if (!done && r.lastWrong.length) {
+      const w = r.lastWrong;
+      const msg = multi
+        ? `${listKeys(w)} ${w.length > 1 ? 'are' : 'is'} not one of the answers.${r.sel.length ? ' Your other pick is still selected.' : ''} Pick again.`
+        : `${w[0]} is not the answer. Pick again.`;
+      feedback = `<div class="feedback" role="status"><span class="state alarm">ALARM</span><p>${msg}</p><span class="mono">misses: ${r.misses}</span></div>`;
+    }
+    const hint = multi && !done ? `<p class="pick-hint" aria-live="polite">${r.sel.length} of ${q.answer.length} selected${r.sel.length === q.answer.length ? ', ready to check' : ''}</p>` : '';
+
+    const chip = r.done === 'revealed' ? '<span class="state">REVEALED</span>'
+      : r.misses ? `<span class="state ok">OK</span><span class="mono topic">after ${plural(r.misses, 'miss', 'misses')}</span>`
+      : '<span class="state ok">OK</span><span class="mono topic">first try</span>';
+
+    const actions = done
+      ? `<button class="btn primary" data-act="next">${last ? 'See practice report' : 'Next question'} <span class="k">Enter</span></button>`
+      : `${multi ? `<button class="btn primary" data-act="check" ${r.sel.length === q.answer.length ? '' : 'disabled'}>Check answer <span class="k">Enter</span></button>` : ''}
+         <button class="btn ghost" data-act="reveal">Show answer</button>
+         ${last ? '' : '<button class="btn ghost" data-act="skip">Skip</button>'}`;
+
+    return `${header(`<div class="bar-mid"><span class="bar-mode">Practice</span>${P.label ? `<span>${P.label}</span>` : ''}<span>${answered}/${P.order.length} answered</span></div>`)}
+    <div class="progress" aria-hidden="true"><i style="width:${pctOf(answered, P.order.length)}%"></i></div>
+    <main class="wrap quiz">
+      <div class="qcol">
+        <div class="qmeta">
+          <h2 class="qnum">Question ${P.pos + 1} <small>of ${P.order.length}</small></h2>
+          ${multi ? `<span class="state flag">SELECT ${q.answer.length}</span>` : ''}
+          ${P.order.some((x, i) => x !== i + 1) ? `<span class="mono push">source #${n}</span>` : ''}
+        </div>
+        <div class="stem">${q.stem}</div>
+        <div class="opts" role="group" aria-label="Answer options">${opts}</div>
+        ${hint}
+        ${feedback}
+        <div class="actions">
+          <button class="btn" data-act="prev" ${P.pos === 0 ? 'disabled' : ''}>← Previous</button>
+          <span class="spacer"></span>
+          ${actions}
+        </div>
+        ${done ? explainHTML(q, chip) : ''}
+        <p class="keys"><kbd>A</kbd>–<kbd>${q.options[q.options.length - 1].key}</kbd> pick · <kbd>Enter</kbd> ${multi ? 'check / ' : ''}next · <kbd>←</kbd> <kbd>→</kbd> move</p>
+      </div>
+      <aside class="rail" aria-label="Question map">
+        <div class="rail-head"><h2>Questions</h2><span class="mono">${answered}/${P.order.length}</span></div>
+        <ol class="cells">${P.order.map((x, i) => {
+          const st = pStatus(x);
+          const label = st === 'ok' ? 'right first try' : st === 'alarm' ? 'missed at least once' : 'not answered';
+          return `<li><button class="cell ${st === 'none' ? '' : 's-' + st} ${i === P.pos ? 'is-cur' : ''}" data-act="goto" data-pos="${i}" aria-label="Question ${i + 1}, ${label}" ${i === P.pos ? 'aria-current="step"' : ''}>${i + 1}</button></li>`;
+        }).join('')}</ol>
+        <ul class="legend">
+          <li><i class="sw ok"></i><b>OK</b> right on the first try</li>
+          <li><i class="sw alarm"></i><b>ALARM</b> missed at least once</li>
+          <li><i class="sw"></i><b>INSUFFICIENT_DATA</b> not answered</li>
+        </ul>
+        <button class="btn wide" data-act="report">End practice and see report</button>
+      </aside>
+    </main>`;
+  }
+
+  function viewPracticeReport() {
+    const P = S.practice;
+    const s = practiceSummary(P);
+    const total = P.order.length;
+    const missItems = s.missed.map(n => {
+      const r = P.rec[n], q = Q.get(n), i = P.order.indexOf(n);
+      const what = r.done === 'revealed' ? 'answer shown' : r.done ? plural(r.misses, 'miss', 'misses') : `${plural(r.misses, 'miss', 'misses')}, unsolved`;
+      return `<li><button data-act="goto" data-pos="${i}"><span class="state alarm">ALARM</span><span class="miss-topic">${q.topic}</span><span class="mono">#${n} · ${what}</span></button></li>`;
+    }).join('');
+
+    return `${header(`<div class="bar-mid"><span class="bar-mode">Practice report</span></div>`)}
+    <main class="wrap">
+      <section class="score">
+        <div>
+          <p class="eyebrow">Practice report${P.label ? ' · ' + P.label : ''}</p>
+          <div class="score-main">
+            <p class="big">${s.ok.length}<span class="of"> / ${total}</span></p>
+            <div class="verdict"><p>right on the first try (${pctOf(s.ok.length, total)}%)</p></div>
+          </div>
+        </div>
+        <dl class="specs four">
+          <div><dt>First try</dt><dd>${s.ok.length}</dd></div>
+          <div><dt>After a miss</dt><dd>${s.recovered.length}</dd></div>
+          <div><dt>Answer shown</dt><dd>${s.revealed.length}</dd></div>
+          <div><dt>Not answered</dt><dd>${s.open.length}</dd></div>
+        </dl>
+        <div class="row">
+          ${s.missed.length ? `<button class="btn primary" data-act="practice-missed">Practice the ${plural(s.missed.length, 'missed question')} again</button>` : ''}
+          ${s.open.length ? `<button class="btn ${s.missed.length ? '' : 'primary'}" data-act="continue-practice">Continue practice</button>` : ''}
+          <button class="btn" data-act="start-practice">New full practice</button>
+          <button class="btn ghost" data-act="home">Home</button>
+        </div>
+      </section>
+      <section class="review">
+        <div class="review-head"><h2>Questions to review</h2></div>
+        ${s.missed.length ? `<ul class="miss-list">${missItems}</ul>` : `<p class="empty">${s.open.length === total ? 'No answers yet.' : 'No misses. Every answered question was right on the first try.'}</p>`}
+      </section>
+    </main>`;
+  }
+
+  /* exam */
+  function viewExam() {
+    const E = S.exam, n = E.order[E.pos], q = Q.get(n), a = E.ans[n] || [];
+    const multi = q.answer.length > 1;
+    const answered = E.order.filter(x => examComplete(E, x)).length;
+    const last = E.pos === E.order.length - 1;
+    const flagged = !!E.flags[n];
+    const timerText = E.deadline ? fmtTime(E.deadline - Date.now()) : fmtTime(Date.now() - E.startedAt);
+    const low = E.deadline && E.deadline - Date.now() < 5 * 60000;
+
+    const opts = q.options.map(o => optHTML(o, { cls: a.includes(o.key) ? 'is-sel' : '', pressed: a.includes(o.key) })).join('');
+    const hint = multi ? `<p class="pick-hint" aria-live="polite">${a.length} of ${q.answer.length} selected</p>` : '';
+    const nFlags = E.order.filter(x => E.flags[x]).length;
+
+    let dialog = '';
+    if (S.confirm) {
+      const open = E.order.length - answered;
+      dialog = `<div class="scrim" data-act="cancel-submit"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-t">
+        <h2 id="dlg-t">Submit your exam?</h2>
+        <p>You answered ${answered} of ${E.order.length} questions.${open ? ` ${plural(open, 'question')} ${open === 1 ? 'is' : 'are'} unanswered or incomplete and will count as wrong.` : ''}${nFlags ? ` ${plural(nFlags, 'question')} ${nFlags === 1 ? 'is' : 'are'} flagged for review.` : ''}</p>
+        <p class="note">After you submit, you see your score and then the explanations. Answers can't be changed.</p>
+        <div class="row"><button class="btn ghost" data-act="cancel-submit">Keep working</button><button class="btn primary" data-act="submit" id="dlg-submit">Submit exam</button></div>
+      </div></div>`;
+    }
+
+    return `${header(`<div class="bar-mid"><span class="bar-mode">Exam</span><span>${answered}/${E.order.length} answered</span>
+        <span id="timer" class="timer ${low ? 'low' : ''}" title="${E.deadline ? 'Time left' : 'Time elapsed'}">${timerText}</span></div>
+        <button class="btn primary sm" data-act="submit-ask">Submit</button>`)}
+    <div class="progress" aria-hidden="true"><i style="width:${pctOf(answered, E.order.length)}%"></i></div>
+    <main class="wrap quiz">
+      <div class="qcol">
+        <div class="qmeta">
+          <h2 class="qnum">Question ${E.pos + 1} <small>of ${E.order.length}</small></h2>
+          ${multi ? `<span class="state flag">SELECT ${q.answer.length}</span>` : ''}
+          ${flagged ? '<span class="state flag">FLAGGED</span>' : ''}
+        </div>
+        <div class="stem">${q.stem}</div>
+        <div class="opts" role="group" aria-label="Answer options">${opts}</div>
+        ${hint}
+        <div class="actions">
+          <button class="btn" data-act="prev" ${E.pos === 0 ? 'disabled' : ''}>← Previous</button>
+          <button class="btn ghost" data-act="flag" aria-pressed="${flagged}">${flagged ? 'Remove flag' : 'Flag for review'} <span class="k">F</span></button>
+          <span class="spacer"></span>
+          ${last
+            ? '<button class="btn primary" data-act="submit-ask">Review and submit</button>'
+            : '<button class="btn primary" data-act="next">Next <span class="k">→</span></button>'}
+        </div>
+        <p class="keys"><kbd>A</kbd>–<kbd>${q.options[q.options.length - 1].key}</kbd> pick · <kbd>F</kbd> flag · <kbd>←</kbd> <kbd>→</kbd> move</p>
+      </div>
+      <aside class="rail" aria-label="Question map">
+        <div class="rail-head"><h2>Questions</h2><span class="mono">${answered}/${E.order.length}</span></div>
+        <ol class="cells">${E.order.map((x, i) => {
+          const done = examComplete(E, x);
+          const part = !done && (E.ans[x] || []).length > 0;
+          const label = (done ? 'answered' : part ? 'incomplete' : 'not answered') + (E.flags[x] ? ', flagged' : '');
+          return `<li><button class="cell ${done ? 's-ans' : part ? 's-part' : ''} ${E.flags[x] ? 'is-flag' : ''} ${i === E.pos ? 'is-cur' : ''}" data-act="goto" data-pos="${i}" aria-label="Question ${i + 1}, ${label}" ${i === E.pos ? 'aria-current="step"' : ''}>${i + 1}</button></li>`;
+        }).join('')}</ol>
+        <ul class="legend">
+          <li><i class="sw ans"></i>Answered</li>
+          <li><i class="sw"></i>Not answered</li>
+          <li><i class="sw flag"></i>Flagged for review (${nFlags})</li>
+        </ul>
+        <button class="btn primary wide" data-act="submit-ask">Submit exam</button>
+      </aside>
+    </main>
+    ${dialog}`;
+  }
+
+  function viewExamResults() {
+    const E = S.exam;
+    const R = examResult(E);
+    const pass = R.scaled >= PASS;
+    const used = E.submittedAt - E.startedAt;
+    const missed = R.rows.filter(r => r.state !== 'right');
+    const flagged = R.rows.filter(r => r.flag);
+    const lists = { missed, flagged, all: R.rows };
+    const filter = lists[S.filter] ? S.filter : 'all';
+    const shown = lists[filter];
+
+    const item = r => {
+      const { q, a } = r;
+      const chip = r.state === 'right' ? '<span class="state ok">OK</span>' : r.state === 'wrong' ? '<span class="state alarm">ALARM</span>' : '<span class="state">INSUFFICIENT_DATA</span>';
+      const opts = q.options.map(o => {
+        const isAns = q.answer.includes(o.key), picked = a.includes(o.key);
+        const cls = isAns ? 'is-right' : picked ? 'is-out' : '';
+        const tags = (isAns ? '<span class="opt-tag ok">Correct</span>' : '') + (picked ? `<span class="opt-tag ${isAns ? 'ok' : 'bad'}">Your pick</span>` : '');
+        return optHTML(o, { cls, tags, interactive: false });
+      }).join('');
+      return `<article class="rev">
+        <div class="rev-head">${chip}<h3>Question ${r.i + 1}</h3>${r.flag ? '<span class="state flag">FLAGGED</span>' : ''}<span class="mono">source #${r.n}</span></div>
+        <div class="stem">${q.stem}</div>
+        <div class="opts static">${opts}</div>
+        ${a.length ? '' : '<p class="yours">You did not answer this question.</p>'}
+        ${explainHTML(q, '', '')}
+      </article>`;
+    };
+    const tab = (key, label, n) => `<button class="tab" data-act="filter" data-f="${key}" aria-pressed="${filter === key}">${label}<span class="n">${n}</span></button>`;
+
+    return `${header(`<div class="bar-mid"><span class="bar-mode">Exam result</span></div>`)}
+    <main class="wrap">
+      <section class="score">
+        <div>
+          <p class="eyebrow">Exam result · ${new Date(E.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</p>
+          <div class="score-main">
+            <p class="big">${R.right}<span class="of"> / ${R.total}</span></p>
+            <div class="verdict">
+              <span class="state ${pass ? 'ok' : 'alarm'}">${pass ? 'PASS' : 'BELOW ' + PASS}</span>
+              <p>${pctOf(R.right, R.total)}% correct · estimated scaled score <b class="mono">${R.scaled}</b></p>
+            </div>
+          </div>
+          <div class="meter-box" aria-hidden="true">
+            <div class="meter">
+              <div class="meter-fill ${pass ? '' : 'fail'}" style="width:${(R.scaled - 100) / 9}%"></div>
+              <div class="meter-pass" style="left:${(PASS - 100) / 9}%"><span>${PASS} to pass</span></div>
+            </div>
+            <div class="meter-axis"><span>100</span><span>1000</span></div>
+          </div>
+        </div>
+        <dl class="specs four">
+          <div><dt>Correct</dt><dd>${R.right}</dd></div>
+          <div><dt>Wrong</dt><dd>${R.wrong}</dd></div>
+          <div><dt>Unanswered</dt><dd>${R.skipped}</dd></div>
+          <div><dt>Time used</dt><dd>${fmtTime(used)}</dd></div>
+        </dl>
+        <p class="note">${E.timeUp ? 'Time ran out, so the exam was submitted automatically. ' : ''}Multi-select questions count only when every pick is right. The scaled score is a straight-line estimate from 100 to 1000; AWS uses its own scaling.</p>
+        <div class="row">
+          ${missed.length ? `<button class="btn primary" data-act="practice-exam-missed">Practice the ${plural(missed.length, 'question')} you missed</button>` : ''}
+          <button class="btn" data-act="start-exam">Take another exam</button>
+          <button class="btn ghost" data-act="home">Home</button>
+        </div>
+      </section>
+      <section class="review">
+        <div class="review-head">
+          <h2>Explanations</h2>
+          <div class="tabs">${tab('missed', 'Missed', missed.length)}${tab('flagged', 'Flagged', flagged.length)}${tab('all', 'All', R.total)}</div>
+        </div>
+        ${shown.length ? shown.map(item).join('') : `<p class="empty">${filter === 'missed' ? 'Nothing missed. Every question was answered correctly.' : 'No questions were flagged.'}</p>`}
+      </section>
+    </main>`;
+  }
+
+  /* ---------- events ---------- */
+  app.addEventListener('click', e => {
+    const t = e.target.closest('[data-act]');
+    if (!t || t.disabled || t.getAttribute('aria-disabled') === 'true') return;
+    const act = t.dataset.act;
+    if (act !== 'restart-practice' && act !== 'restart-exam') armed = null;
+    switch (act) {
+      case 'home': S.confirm = false; S.screen = 'home'; fx.top = true; go(); break;
+      case 'start-practice': startPractice(); break;
+      case 'resume-practice': S.screen = 'practice'; fx.top = true; go(); break;
+      case 'continue-practice': {
+        const P = S.practice;
+        const i = P.order.findIndex(n => !(P.rec[n] && P.rec[n].done));
+        P.pos = i < 0 ? P.pos : i;
+        S.screen = 'practice'; fx.top = true; go();
+        break;
+      }
+      case 'restart-practice':
+        if (armed === 'practice') startPractice();
+        else { armed = 'practice'; render(); }
+        break;
+      case 'practice-missed': startPractice(practiceSummary(S.practice).missed, 'Missed questions'); break;
+      case 'practice-alarm': startPractice(QS.filter(q => S.hist[q.n] === 'alarm').map(q => q.n), 'Questions in ALARM'); break;
+      case 'practice-exam-missed': startPractice(examResult(S.exam).rows.filter(r => r.state !== 'right').map(r => r.n), 'Missed in exam'); break;
+      case 'report': S.screen = 'practiceReport'; fx.top = true; go(); break;
+      case 'start-exam': startExam(); break;
+      case 'resume-exam': S.screen = 'exam'; fx.top = true; go(); break;
+      case 'restart-exam':
+        if (armed === 'exam') startExam();
+        else { armed = 'exam'; render(); }
+        break;
+      case 'results': S.screen = 'examResults'; fx.top = true; go(); break;
+      case 'pick': pick(t.dataset.key); break;
+      case 'check': practiceCheck(); break;
+      case 'reveal': practiceReveal(); break;
+      case 'skip': moveTo(S.practice.pos + 1); break;
+      case 'prev': moveTo(session().pos - 1); break;
+      case 'next': S.screen === 'practice' ? practiceNext() : moveTo(S.exam.pos + 1); break;
+      case 'goto': {
+        if (S.screen === 'practiceReport') S.screen = 'practice';
+        const sess = session();
+        sess.pos = +t.dataset.pos; fx.top = true; go();
+        break;
+      }
+      case 'flag': toggleFlag(); break;
+      case 'submit-ask': S.confirm = true; render(); app.querySelector('#dlg-submit')?.focus(); break;
+      case 'cancel-submit':
+        if (t.classList.contains('scrim') && e.target !== t) return; // clicks inside the dialog
+        S.confirm = false; render();
+        break;
+      case 'submit': submitExam(false); break;
+      case 'filter': S.filter = t.dataset.f; go(); break;
+    }
+  });
+
+  app.addEventListener('change', e => {
+    const id = e.target.id;
+    if (id === 'set-pshuffle') S.settings.pShuffle = e.target.checked;
+    else if (id === 'set-eshuffle') S.settings.eShuffle = e.target.checked;
+    else if (id === 'set-timed') S.settings.timed = e.target.checked;
+    else if (id === 'set-count') S.settings.examCount = +e.target.value;
+    else return;
+    save();
+  });
+
+  app.addEventListener('keydown', e => {
+    const opt = e.target.closest && e.target.closest('.opt[data-act="pick"]');
+    if (opt && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      if (opt.getAttribute('aria-disabled') !== 'true') pick(opt.dataset.key);
+    }
+  });
+
+  function toggleFlag() {
+    const E = S.exam, n = E.order[E.pos];
+    if (E.flags[n]) delete E.flags[n]; else E.flags[n] = true;
+    go();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    if (S.confirm) {
+      if (e.key === 'Escape') { S.confirm = false; render(); }
+      return;
+    }
+    if (S.screen !== 'practice' && S.screen !== 'exam') return;
+    const sess = session();
+    const q = Q.get(sess.order[sess.pos]);
+    const k = e.key.toLowerCase();
+    let key = null;
+    if (/^[a-e]$/.test(k)) key = k.toUpperCase();
+    else if (/^[1-5]$/.test(k)) key = 'ABCDE'[+k - 1];
+    if (key) {
+      if (q.options.some(o => o.key === key)) { e.preventDefault(); pick(key); }
+      return;
+    }
+    if (e.key === 'ArrowRight') { e.preventDefault(); if (S.screen === 'exam') moveTo(sess.pos + 1); else if (sess.pos < sess.order.length - 1) moveTo(sess.pos + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); moveTo(sess.pos - 1); }
+    else if (k === 'f' && S.screen === 'exam') { e.preventDefault(); toggleFlag(); }
+    else if (e.key === 'Enter' && S.screen === 'practice') {
+      if (e.target.closest && e.target.closest('button, .opt')) return;
+      const r = prec(sess.order[sess.pos]);
+      if (r.done) { e.preventDefault(); practiceNext(); }
+      else if (q.answer.length > 1 && r.sel.length === q.answer.length) { e.preventDefault(); practiceCheck(); }
+    }
+  });
+
+  /* exam clock */
+  function tick() {
+    const E = S.exam;
+    if (!E || E.submittedAt) return;
+    if (E.deadline && Date.now() >= E.deadline) {
+      submitExam(true);
+      return;
+    }
+    const el = document.getElementById('timer');
+    if (el) {
+      if (E.deadline) {
+        const left = E.deadline - Date.now();
+        el.textContent = fmtTime(left);
+        el.classList.toggle('low', left < 5 * 60000);
+      } else {
+        el.textContent = fmtTime(Date.now() - E.startedAt);
+      }
+    }
+  }
+  setInterval(tick, 1000);
+
+  /* ---------- boot ---------- */
+  function boot(data) {
+    const saved = (data && data.state) || load();
+    if (saved && typeof saved === 'object') {
+      const d = defaults();
+      S = Object.assign(d, saved, { settings: Object.assign(d.settings, saved.settings || {}), hist: saved.hist || {} });
+    }
+    if (!validSession(S.practice)) S.practice = null;
+    if (!validSession(S.exam)) S.exam = null;
+    if (!S.practice && (S.screen === 'practice' || S.screen === 'practiceReport')) S.screen = 'home';
+    if (!S.exam && (S.screen === 'exam' || S.screen === 'examResults')) S.screen = 'home';
+    S.confirm = false;
+    render();
+    tick();
+  }
+  window.claude?.hot?.snapshot?.(() => ({ state: S }));
+  window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+})();
+</script>
