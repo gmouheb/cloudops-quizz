@@ -1,4 +1,4 @@
-<title>SOA-C03 Exam Drill</title>
+<title>AWS Exam Drill</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,19 +11,20 @@
 <script>
 (() => {
   const app = document.getElementById('app');
-  const DATA = window.QUIZ;
-  if (!DATA) {
+  const EXAMS = window.EXAMS;
+  if (!Array.isArray(EXAMS) || !EXAMS.length) {
     app.innerHTML = '<p class="load-error">The question data did not load. Keep <code>questions.js</code> next to this page, or run <code>python3 build.py</code> to generate it.</p>';
     return;
   }
 
-  const QS = DATA.questions;
-  const Q = new Map(QS.map(q => [q.n, q]));
-  const MULTI = QS.filter(q => q.answer.length > 1).length;
-  const STORE = 'soa-c03-drill-v1';
+  const STORE = 'aws-exam-drill-v2';
+  const OLD_STORE = 'soa-c03-drill-v1'; // from before the exam picker, when only the CloudOps exam existed
   const SEC_PER_Q = 120;
-  const PASS = 720;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // The selected exam's data. useExam() swaps these when the user picks another exam.
+  let EX, QS, Q, MULTI, PASS;
+  let states = {}; // saved state of every exam, by exam id; S is states[EX.id]
 
   const defaults = () => ({
     screen: 'home',
@@ -34,7 +35,7 @@
     filter: 'missed',
     confirm: false,
   });
-  let S = defaults();
+  let S = null;
   let fx = {};      // one-shot effects for the next render
   let armed = null; // which "start over" button is waiting for a second click
 
@@ -59,10 +60,45 @@
   const validSession = s => s && Array.isArray(s.order) && s.order.length > 0 && s.order.every(n => Q.has(n));
 
   function load() {
-    try { const raw = localStorage.getItem(STORE); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+    try {
+      const raw = localStorage.getItem(STORE);
+      if (raw) return JSON.parse(raw);
+      const old = localStorage.getItem(OLD_STORE);
+      if (old) return { current: 'soa-c03', exams: { 'soa-c03': JSON.parse(old) } };
+    } catch (e) { /* storage unavailable or unreadable: start fresh */ }
+    return null;
   }
   function save() {
-    try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* storage unavailable: state lives in memory */ }
+    try { localStorage.setItem(STORE, JSON.stringify({ current: EX.id, exams: states })); } catch (e) { /* storage unavailable: state lives in memory */ }
+  }
+
+  /* ---------- exam selection ---------- */
+  function restore(saved) {
+    const d = defaults();
+    const s = saved && typeof saved === 'object'
+      ? Object.assign(d, saved, { settings: Object.assign(d.settings, saved.settings || {}), hist: saved.hist || {} })
+      : d;
+    if (!validSession(s.practice)) s.practice = null;
+    if (!validSession(s.exam)) s.exam = null;
+    if (!s.practice && (s.screen === 'practice' || s.screen === 'practiceReport')) s.screen = 'home';
+    if (!s.exam && (s.screen === 'exam' || s.screen === 'examResults')) s.screen = 'home';
+    s.confirm = false;
+    return s;
+  }
+  function useExam(id) {
+    EX = EXAMS.find(x => x.id === id) || EXAMS[0];
+    QS = EX.questions;
+    Q = new Map(QS.map(q => [q.n, q]));
+    MULTI = QS.filter(q => q.answer.length > 1).length;
+    PASS = EX.pass || 720;
+    S = states[EX.id] = restore(states[EX.id]);
+    document.title = `${EX.code} Exam Drill`;
+  }
+  function switchExam(id) {
+    if (id === EX.id || !EXAMS.some(x => x.id === id)) return;
+    useExam(id);
+    S.screen = 'home';
+    go();
   }
 
   /* ---------- practice logic ---------- */
@@ -232,6 +268,11 @@
       t.replaceWith(w);
       w.appendChild(t);
     });
+    // Documentation links in explanations open in a new tab so the quiz stays put.
+    app.querySelectorAll('.prose a[href^="http"], .stem a[href^="http"]').forEach(a => {
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+    });
     applyFx();
   }
   function applyFx() {
@@ -258,7 +299,7 @@
 
   function header(mid) {
     return `<header class="bar"><div class="wrap bar-in">
-      <button class="brand" data-act="home" aria-label="SOA-C03 Exam Drill, back to home"><span class="brand-code">SOA-C03</span><span class="brand-name">Exam Drill</span></button>
+      <button class="brand" data-act="home" aria-label="${EX.code} Exam Drill, back to home"><span class="brand-code">${EX.code}</span><span class="brand-name">Exam Drill</span></button>
       ${mid || ''}
     </div></header>`;
   }
@@ -279,6 +320,24 @@
   }
 
   /* home */
+  function examCard(x) {
+    const st = states[x.id] || {};
+    const hist = Object.values(st.hist || {});
+    const ok = hist.filter(h => h === 'ok').length;
+    const alarm = hist.filter(h => h === 'alarm').length;
+    const E = st.exam;
+    const running = E && !E.submittedAt && (!E.deadline || E.deadline > Date.now());
+    const cur = x.id === EX.id;
+    const stats = ok || alarm
+      ? `<span><i class="sw ok"></i>OK <b>${ok}</b></span><span><i class="sw alarm"></i>ALARM <b>${alarm}</b></span>`
+      : '<span>Not started</span>';
+    return `<button class="exam-card" data-act="pick-exam" data-id="${x.id}" aria-pressed="${cur}" aria-label="${x.name}${cur ? ', selected' : ''}">
+      <span class="exam-card-top"><span class="brand-code">${x.code}</span>${running ? '<span class="state flag">EXAM RUNNING</span>' : ''}${cur ? '<span class="exam-card-cur">Selected</span>' : ''}</span>
+      <span class="exam-card-name">${x.short || x.name}</span>
+      <span class="counts">${stats}<span>${x.questions.length} questions</span></span>
+    </button>`;
+  }
+
   function viewHome() {
     const P = S.practice, E = S.exam;
     const hist = QS.map(q => S.hist[q.n] || 'none');
@@ -315,12 +374,18 @@
     const countOpts = [QS.length, 30, 15].filter((v, i, a) => v <= QS.length && a.indexOf(v) === i)
       .map(v => `<option value="${v}" ${S.settings.examCount === v ? 'selected' : ''}>${v === QS.length ? `All ${v} (full exam)` : `${v} random`}</option>`).join('');
 
+    const picker = EXAMS.length < 2 ? '' : `<section class="picker" aria-labelledby="pick-t">
+        <h2 id="pick-t" class="eyebrow">Choose an exam</h2>
+        <div class="exam-cards">${EXAMS.map(examCard).join('')}</div>
+      </section>`;
+
     return `${header()}
     <main class="wrap">
+      ${picker}
       <section class="hero">
         <div>
-          <p class="eyebrow">AWS Certified CloudOps Engineer – Associate</p>
-          <h1><span class="code">SOA-C03</span>Exam Drill</h1>
+          <p class="eyebrow">${EX.name}</p>
+          <h1><span class="code">${EX.code}</span>Exam Drill</h1>
           <p class="lede">${QS.length} questions from the official AWS Skill Builder practice assessment. Each one explains why the right answer is right and why every other option is wrong.</p>
         </div>
         <dl class="specs">
@@ -379,7 +444,7 @@
         </article>
       </section>
 
-      <p class="source">Questions and explanations come from <code>aws-cloudops-practice-exam-explained.md</code>. The explanations are that file author's reasoning, not AWS's official rationale. Progress is saved in this browser only.</p>
+      <p class="source">Questions and explanations come from <code>${EX.source}</code>. ${EX.note || ''} Progress is saved in this browser only, separately for each exam.</p>
     </main>`;
   }
 
@@ -649,6 +714,7 @@
     if (act !== 'restart-practice' && act !== 'restart-exam') armed = null;
     switch (act) {
       case 'home': S.confirm = false; S.screen = 'home'; fx.top = true; go(); break;
+      case 'pick-exam': switchExam(t.dataset.id); break;
       case 'start-practice': startPractice(); break;
       case 'resume-practice': S.screen = 'practice'; fx.top = true; go(); break;
       case 'continue-practice': {
@@ -773,20 +839,13 @@
 
   /* ---------- boot ---------- */
   function boot(data) {
-    const saved = (data && data.state) || load();
-    if (saved && typeof saved === 'object') {
-      const d = defaults();
-      S = Object.assign(d, saved, { settings: Object.assign(d.settings, saved.settings || {}), hist: saved.hist || {} });
-    }
-    if (!validSession(S.practice)) S.practice = null;
-    if (!validSession(S.exam)) S.exam = null;
-    if (!S.practice && (S.screen === 'practice' || S.screen === 'practiceReport')) S.screen = 'home';
-    if (!S.exam && (S.screen === 'exam' || S.screen === 'examResults')) S.screen = 'home';
-    S.confirm = false;
+    const saved = (data && data.store) || load();
+    states = saved && saved.exams && typeof saved.exams === 'object' ? saved.exams : {};
+    useExam(saved && saved.current);
     render();
     tick();
   }
-  window.claude?.hot?.snapshot?.(() => ({ state: S }));
+  window.claude?.hot?.snapshot?.(() => ({ store: { current: EX.id, exams: states } }));
   window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
 })();
 </script>

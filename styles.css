@@ -104,6 +104,22 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .progress > i { display: block; height: 100%; background: var(--accent); transition: width 0.25s ease; }
 
 /* ---------- home ---------- */
+.picker { padding-top: 2rem; }
+.picker .eyebrow { font-weight: 600; margin-bottom: 0.6rem; }
+.picker + .hero { padding-top: 1.75rem; }
+.exam-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 0.75rem; }
+.exam-card {
+  display: grid; gap: 0.5rem; min-width: 0; text-align: left;
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem; cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+.exam-card:hover { border-color: var(--muted); }
+.exam-card[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); cursor: default; }
+.exam-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.exam-card-cur { margin-left: auto; font: 600 0.6875rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); }
+.exam-card-name { font-family: var(--f-display); font-stretch: 112%; font-weight: 800; font-size: 1.25rem; line-height: 1.2; }
+.prose a { color: var(--accent-ink); text-underline-offset: 2px; }
 .hero { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 2rem 3rem; align-items: end; padding-block: 3rem 2.25rem; }
 h1 {
   font-family: var(--f-display); font-stretch: 120%; font-weight: 850;
@@ -311,7 +327,7 @@ th { font-family: var(--f-mono); font-size: 0.6875rem; letter-spacing: 0.05em; t
 .enter { animation: enter 0.28s ease; }
 @media (prefers-reduced-motion: reduce) {
   .shake, .enter { animation: none; }
-  .progress > i, .opt { transition: none; }
+  .progress > i, .opt, .exam-card { transition: none; }
 }
 
 @media (max-width: 860px) {
