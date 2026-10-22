@@ -1,1 +1,0 @@
-# cloudops-quizz

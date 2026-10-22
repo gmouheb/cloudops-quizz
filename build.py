@@ -34,6 +34,15 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 720,
     },
+    {
+        "id": "dea-c01",
+        "code": "DEA-C01",
+        "name": "AWS Certified Data Engineer – Associate",
+        "short": "Data Engineer",
+        "source": "aws-data-engineer-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 720,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
