@@ -43,6 +43,15 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 720,
     },
+    {
+        "id": "dva-c02",
+        "code": "DVA-C02",
+        "name": "AWS Certified Developer – Associate",
+        "short": "Developer",
+        "source": "aws-developer-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 720,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
