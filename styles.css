@@ -107,7 +107,9 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .picker { padding-top: 2rem; }
 .picker .eyebrow { font-weight: 600; margin-bottom: 0.6rem; }
 .picker + .hero { padding-top: 1.75rem; }
-.exam-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 0.75rem; }
+.exam-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+@media (min-width: 1000px) { .exam-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .exam-cards { grid-template-columns: minmax(0, 1fr); } }
 .exam-card {
   display: grid; gap: 0.5rem; min-width: 0; text-align: left;
   font: inherit; color: var(--ink); background: var(--surface);
