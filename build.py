@@ -106,6 +106,16 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 750,
     },
+    {
+        "id": "aib-c01",
+        "code": "AIB-C01",
+        "level": "Foundational",
+        "name": "AWS Certified AI Business Strategist",
+        "short": "AI Business Strategist",
+        "source": "aws-ai-business-strategist-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 700,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
