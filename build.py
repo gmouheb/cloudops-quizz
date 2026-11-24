@@ -70,6 +70,15 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 700,
     },
+    {
+        "id": "aif-c01",
+        "code": "AIF-C01",
+        "name": "AWS Certified AI Practitioner",
+        "short": "AI Practitioner",
+        "source": "aws-ai-practitioner-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page. The 4 matching questions are split into one question per statement.",
+        "pass": 700,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
