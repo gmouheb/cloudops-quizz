@@ -333,7 +333,7 @@
       : '<span>Not started</span>';
     return `<button class="exam-card" data-act="pick-exam" data-id="${x.id}" aria-pressed="${cur}" aria-label="${x.name}${cur ? ', selected' : ''}">
       <span class="exam-card-top"><span class="brand-code">${x.code}</span>${running ? '<span class="state flag">EXAM RUNNING</span>' : ''}${cur ? '<span class="exam-card-cur">Selected</span>' : ''}</span>
-      <span class="exam-card-name">${x.short || x.name}</span>
+      <span class="exam-card-title"><span class="exam-card-name">${x.short || x.name}</span>${x.level ? `<span class="exam-card-level">AWS Certified · ${x.level}</span>` : ''}</span>
       <span class="counts">${stats}<span>${x.questions.length} questions</span></span>
     </button>`;
   }
