@@ -52,6 +52,15 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 720,
     },
+    {
+        "id": "mla-c02",
+        "code": "MLA-C02",
+        "name": "AWS Certified Machine Learning Engineer – Associate",
+        "short": "ML Engineer",
+        "source": "aws-ml-engineer-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 720,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
