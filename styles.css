@@ -156,7 +156,7 @@ h1 .code { display: block; color: var(--accent-ink); font-stretch: 100%; }
 .strip-axis { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 0.6875rem; color: var(--muted); margin-top: 0.4rem; }
 .board .row { margin-top: 1rem; }
 
-.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding-block: 2rem; }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding-block: 2rem 4rem; }
 .mode { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
 .mode-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .mode h2 { font-family: var(--f-display); font-stretch: 116%; font-weight: 850; font-size: 1.875rem; letter-spacing: -0.015em; margin: 0; }
@@ -175,8 +175,6 @@ select {
 .mode .row { margin-top: auto; }
 .mode .sub { font-size: 0.875rem; color: var(--muted); }
 .mode .sub button { font: inherit; background: none; border: 0; padding: 0; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
-.source { color: var(--muted); font-size: 0.875rem; max-width: 70ch; padding-block: 0 3rem; margin: 0; }
-.source code { font-size: 0.8125rem; }
 
 /* ---------- quiz layout ---------- */
 .quiz { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; gap: 2.5rem; align-items: start; padding-block: 1.75rem 4rem; }
@@ -388,7 +386,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .specs:not(.four) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .specs dd { font-size: 1.5rem; }
   .board h2 span { display: block; margin: 0.15rem 0 0; }
-  .modes { padding-block: 1.5rem; gap: 1rem; }
+  .modes { padding-block: 1.5rem 3rem; gap: 1rem; }
   .mode h2 { font-size: 1.625rem; }
   .mode .row .btn, .score .row .btn, .dialog .row .btn { flex: 1 1 auto; }
 
