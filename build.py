@@ -61,6 +61,15 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 720,
     },
+    {
+        "id": "clf-c02",
+        "code": "CLF-C02",
+        "name": "AWS Certified Cloud Practitioner",
+        "short": "Cloud Practitioner",
+        "source": "aws-cloud-practitioner-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 700,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
