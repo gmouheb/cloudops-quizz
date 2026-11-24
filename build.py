@@ -96,6 +96,16 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 750,
     },
+    {
+        "id": "aip-c01",
+        "code": "AIP-C01",
+        "level": "Professional",
+        "name": "AWS Certified Generative AI Developer – Professional",
+        "short": "Generative AI Developer",
+        "source": "aws-genai-developer-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 750,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
