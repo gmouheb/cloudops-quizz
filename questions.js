@@ -3,6 +3,7 @@ window.EXAMS = [
  {
   "id": "soa-c03",
   "code": "SOA-C03",
+  "level": "Associate",
   "name": "AWS Certified CloudOps Engineer – Associate",
   "short": "CloudOps Engineer",
   "source": "aws-cloudops-practice-exam-explained.md",
@@ -1870,6 +1871,7 @@ window.EXAMS = [
  {
   "id": "saa-c03",
   "code": "SAA-C03",
+  "level": "Associate",
   "name": "AWS Certified Solutions Architect – Associate",
   "short": "Solutions Architect",
   "source": "aws-solutions-architect-practice-exam-explained.md",
@@ -3732,6 +3734,7 @@ window.EXAMS = [
  {
   "id": "dea-c01",
   "code": "DEA-C01",
+  "level": "Associate",
   "name": "AWS Certified Data Engineer – Associate",
   "short": "Data Engineer",
   "source": "aws-data-engineer-practice-exam-explained.md",
@@ -5604,6 +5607,7 @@ window.EXAMS = [
  {
   "id": "dva-c02",
   "code": "DVA-C02",
+  "level": "Associate",
   "name": "AWS Certified Developer – Associate",
   "short": "Developer",
   "source": "aws-developer-practice-exam-explained.md",
@@ -7456,6 +7460,7 @@ window.EXAMS = [
  {
   "id": "mla-c02",
   "code": "MLA-C02",
+  "level": "Associate",
   "name": "AWS Certified Machine Learning Engineer – Associate",
   "short": "ML Engineer",
   "source": "aws-ml-engineer-practice-exam-explained.md",
@@ -9333,6 +9338,7 @@ window.EXAMS = [
  {
   "id": "clf-c02",
   "code": "CLF-C02",
+  "level": "Foundational",
   "name": "AWS Certified Cloud Practitioner",
   "short": "Cloud Practitioner",
   "source": "aws-cloud-practitioner-practice-exam-explained.md",
@@ -11215,6 +11221,7 @@ window.EXAMS = [
  {
   "id": "aif-c01",
   "code": "AIF-C01",
+  "level": "Foundational",
   "name": "AWS Certified AI Practitioner",
   "short": "AI Practitioner",
   "source": "aws-ai-practitioner-practice-exam-explained.md",
@@ -13319,6 +13326,7 @@ window.EXAMS = [
  {
   "id": "dop-c02",
   "code": "DOP-C02",
+  "level": "Professional",
   "name": "AWS Certified DevOps Engineer – Professional",
   "short": "DevOps Engineer",
   "source": "aws-devops-engineer-practice-exam-explained.md",
