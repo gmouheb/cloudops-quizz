@@ -116,6 +116,16 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
         "pass": 700,
     },
+    {
+        "id": "scs-c03",
+        "code": "SCS-C03",
+        "level": "Specialty",
+        "name": "AWS Certified Security – Specialty",
+        "short": "Security",
+        "source": "aws-security-specialty-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 750,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
