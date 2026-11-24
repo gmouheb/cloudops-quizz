@@ -79,6 +79,15 @@ EXAMS = [
         "note": "The explanations are AWS's official rationale from the Skill Builder results page. The 4 matching questions are split into one question per statement.",
         "pass": 700,
     },
+    {
+        "id": "dop-c02",
+        "code": "DOP-C02",
+        "name": "AWS Certified DevOps Engineer – Professional",
+        "short": "DevOps Engineer",
+        "source": "aws-devops-engineer-practice-exam-explained.md",
+        "note": "The explanations are AWS's official rationale from the Skill Builder results page.",
+        "pass": 750,
+    },
 ]
 
 MD_EXT = ["fenced_code", "tables"]
