@@ -607,7 +607,7 @@
 
     return `${header(`<div class="bar-mid"><span class="bar-mode">Exam</span><span>${answered}/${E.order.length} answered</span>
         <span id="timer" class="timer ${low ? 'low' : ''}" title="${E.deadline ? 'Time left' : 'Time elapsed'}">${timerText}</span>
-        <button class="btn ghost sm timer-btn" data-act="timer-toggle" aria-pressed="${paused}" title="${paused ? 'Start the timer' : 'Stop the timer'} (P)">${paused ? '▶ Start' : '❚❚ Stop'}</button></div>
+        <button class="btn ghost sm timer-btn" data-act="timer-toggle" aria-pressed="${paused}" title="${paused ? 'Start the timer' : 'Stop the timer'} (P)">${paused ? 'Start' : ' Stop'}</button></div>
         <button class="btn primary sm" data-act="submit-ask">Submit</button>`)}
     <div class="progress" aria-hidden="true"><i style="width:${pctOf(answered, E.order.length)}%"></i></div>
     ${paused ? `<div class="scrim"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pause-t">
