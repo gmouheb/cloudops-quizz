@@ -198,6 +198,21 @@
   }
   const examComplete = (E, n) => (E.ans[n] || []).length === Q.get(n).answer.length;
   const examActive = () => S.exam && !S.exam.submittedAt;
+  // While the timer is stopped, the exam clock is frozen at the moment it stopped.
+  const clock = E => E.pausedAt || Date.now();
+  function resumeTimer(E) {
+    if (!E.pausedAt) return;
+    const gap = Date.now() - E.pausedAt;
+    E.startedAt += gap;
+    if (E.deadline) E.deadline += gap;
+    E.pausedAt = null;
+  }
+  function toggleTimer() {
+    const E = S.exam;
+    if (!examActive()) return;
+    if (E.pausedAt) resumeTimer(E); else E.pausedAt = Date.now();
+    go();
+  }
 
   function examPick(key) {
     const E = S.exam, n = E.order[E.pos], q = Q.get(n);
@@ -228,6 +243,7 @@
   function submitExam(timeUp) {
     const E = S.exam;
     if (!E || E.submittedAt) return;
+    resumeTimer(E);
     E.submittedAt = timeUp ? E.deadline : Date.now();
     E.timeUp = !!timeUp;
     const R = examResult(E);
@@ -326,7 +342,7 @@
     const ok = hist.filter(h => h === 'ok').length;
     const alarm = hist.filter(h => h === 'alarm').length;
     const E = st.exam;
-    const running = E && !E.submittedAt && (!E.deadline || E.deadline > Date.now());
+    const running = E && !E.submittedAt && (!E.deadline || E.deadline > (E.pausedAt || Date.now()));
     const cur = x.id === EX.id;
     const stats = ok || alarm
       ? `<span><i class="sw ok"></i>OK <b>${ok}</b></span><span><i class="sw alarm"></i>ALARM <b>${alarm}</b></span>`
@@ -361,7 +377,7 @@
     let examActions, examSub = '';
     if (examActive()) {
       const answered = E.order.filter(n => examComplete(E, n)).length;
-      const left = E.deadline ? ` · ${fmtTime(E.deadline - Date.now())} left` : '';
+      const left = E.deadline ? ` · ${fmtTime(E.deadline - clock(E))} left${E.pausedAt ? ', paused' : ''}` : (E.pausedAt ? ' · paused' : '');
       examActions = `<button class="btn primary" data-act="resume-exam">Resume exam · ${answered}/${E.order.length}${left}</button>
         <button class="btn ${armed === 'exam' ? 'danger' : 'ghost'}" data-act="restart-exam">${armed === 'exam' ? 'Discard answers and restart' : 'Start over'}</button>`;
     } else {
@@ -570,8 +586,9 @@
     const answered = E.order.filter(x => examComplete(E, x)).length;
     const last = E.pos === E.order.length - 1;
     const flagged = !!E.flags[n];
-    const timerText = E.deadline ? fmtTime(E.deadline - Date.now()) : fmtTime(Date.now() - E.startedAt);
-    const low = E.deadline && E.deadline - Date.now() < 5 * 60000;
+    const now = clock(E), paused = !!E.pausedAt;
+    const timerText = E.deadline ? fmtTime(E.deadline - now) : fmtTime(now - E.startedAt);
+    const low = E.deadline && E.deadline - now < 5 * 60000;
 
     const opts = q.options.map(o => optHTML(o, { cls: a.includes(o.key) ? 'is-sel' : '', pressed: a.includes(o.key) })).join('');
     const hint = multi ? `<p class="pick-hint" aria-live="polite">${a.length} of ${q.answer.length} selected</p>` : '';
@@ -589,10 +606,12 @@
     }
 
     return `${header(`<div class="bar-mid"><span class="bar-mode">Exam</span><span>${answered}/${E.order.length} answered</span>
-        <span id="timer" class="timer ${low ? 'low' : ''}" title="${E.deadline ? 'Time left' : 'Time elapsed'}">${timerText}</span></div>
+        <span id="timer" class="timer ${low ? 'low' : ''}" title="${E.deadline ? 'Time left' : 'Time elapsed'}">${timerText}</span>
+        <button class="btn ghost sm timer-btn" data-act="timer-toggle" aria-pressed="${paused}" title="${paused ? 'Start the timer' : 'Stop the timer'} (P)">${paused ? '▶ Start' : '❚❚ Stop'}</button></div>
         <button class="btn primary sm" data-act="submit-ask">Submit</button>`)}
     <div class="progress" aria-hidden="true"><i style="width:${pctOf(answered, E.order.length)}%"></i></div>
-    <main class="wrap quiz">
+    ${paused ? `<div class="paused-note" role="status">Timer stopped. Questions are hidden until you start it again. <button class="btn primary sm" data-act="timer-toggle">▶ Start timer</button></div>` : ''}
+    <main class="wrap quiz${paused ? ' is-paused' : ''}" ${paused ? 'inert' : ''}>
       <div class="qcol">
         <div class="qmeta">
           <h2 class="qnum">Question ${E.pos + 1} <small>of ${E.order.length}</small></h2>
@@ -610,7 +629,7 @@
             ? '<button class="btn primary" data-act="submit-ask">Review and submit</button>'
             : '<button class="btn primary" data-act="next">Next <span class="k">→</span></button>'}
         </div>
-        <p class="keys"><kbd>A</kbd>–<kbd>${q.options[q.options.length - 1].key}</kbd> pick · <kbd>F</kbd> flag · <kbd>←</kbd> <kbd>→</kbd> move</p>
+        <p class="keys"><kbd>A</kbd>–<kbd>${q.options[q.options.length - 1].key}</kbd> pick · <kbd>F</kbd> flag · <kbd>P</kbd> stop/start timer · <kbd>←</kbd> <kbd>→</kbd> move</p>
       </div>
       <aside class="rail" aria-label="Question map">
         <div class="rail-head"><h2>Questions</h2><span class="mono">${answered}/${E.order.length}</span></div>
@@ -750,6 +769,7 @@
         break;
       }
       case 'flag': toggleFlag(); break;
+      case 'timer-toggle': toggleTimer(); break;
       case 'submit-ask': S.confirm = true; render(); app.querySelector('#dlg-submit')?.focus(); break;
       case 'cancel-submit':
         if (t.classList.contains('scrim') && e.target !== t) return; // clicks inside the dialog
@@ -793,6 +813,8 @@
       return;
     }
     if (S.screen !== 'practice' && S.screen !== 'exam') return;
+    if (S.screen === 'exam' && e.key.toLowerCase() === 'p') { e.preventDefault(); toggleTimer(); return; }
+    if (S.screen === 'exam' && S.exam.pausedAt) return; // no answering while the timer is stopped
     const sess = session();
     const q = Q.get(sess.order[sess.pos]);
     const k = e.key.toLowerCase();
@@ -817,7 +839,7 @@
   /* exam clock */
   function tick() {
     const E = S.exam;
-    if (!E || E.submittedAt) return;
+    if (!E || E.submittedAt || E.pausedAt) return;
     if (E.deadline && Date.now() >= E.deadline) {
       submitExam(true);
       return;
